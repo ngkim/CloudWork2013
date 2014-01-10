@@ -33,8 +33,8 @@ EOF
 echo "4. resize partitons of original image and create a new vm image"
 virt-resize --resize /dev/sda1=+1G $IMG_NAME /tmp/${IMG_NAME}.qcow2
 
-echo "5. move new vm image into $PWD"
-mv /tmp/${IMG_NAME}.qcow2 $PWD/${IMG_NAME}
+echo "5. move new vm image into $VM_DIR"
+mv /tmp/${IMG_NAME}.qcow2 $PWD
 
 echo "6. Done!!! ${IMG_NAME}.qcow2 created"
 #chown libvirt-qemu.kvm /vms/herman/herman_vd.qcow2

@@ -1,5 +1,5 @@
-.class
-.sql
-.img
+*.class
+*.sql
+*.img
 cinder-volumes
-.gz
+*.gz

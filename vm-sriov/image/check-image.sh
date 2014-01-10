@@ -13,4 +13,4 @@ if [ -z $IMG ]; then
 	usage
 fi
 
-qemu-img check -f qcow2 $IMG
+qemu-img check -f qcow2 -r all $IMG
