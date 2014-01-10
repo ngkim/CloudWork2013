@@ -1,0 +1,366 @@
+diff -urN eswitchd-mlnx/db/device_db.py eswitchd-intel/db/device_db.py
+--- eswitchd-mlnx/db/device_db.py	2013-06-12 13:06:18.744375442 +0900
++++ eswitchd-intel/db/device_db.py	2013-07-16 01:05:35.677082672 +0900
+@@ -54,11 +54,14 @@
+     
+     def get_dev_fabric(self,dev):
+         for fabric in self.device_db:
++            LOG.error("NGKIM get_dev_fabric fabric= %s", fabric)
++            LOG.error("NGKIM device_db[fabric]= %s", self.device_db[fabric]['vfs'])
+             if dev in self.device_db[fabric]['vfs']+self.device_db[fabric]['eths']:
+                 return fabric
+             
+     def allocate_device(self,fabric,is_device=True,dev=None):
+         available_resources = self.device_db[fabric]['free_vfs']
++        LOG.error("NGKIM allocate_device device_db[fabric]['free_vfs']= %s", self.device_db[fabric]['free_vfs'])
+         if is_device:
+             available_resources = self.device_db[fabric]['free_eths']
+         try:
+@@ -66,6 +69,7 @@
+                 available_resources.remove(dev)
+             else:
+                 dev = available_resources.pop()
++            LOG.error("NGKIM allocate_device dev= %s", dev)
+             return dev
+         except Exception, e:
+             LOG.error("exception on device allocation on dev  %s",dev)
+diff -urN eswitchd-mlnx/db/eswitch_db.py eswitchd-intel/db/eswitch_db.py
+--- eswitchd-mlnx/db/eswitch_db.py	2013-06-12 13:13:31.648416873 +0900
++++ eswitchd-intel/db/eswitch_db.py	2013-07-16 01:05:35.685082666 +0900
+@@ -29,12 +29,12 @@
+             self.acl_table = {}
+                            
+         def create_port(self, port_name, port_type):
+-            LOG.error("NGKIM port_name= %s, port_type= %s", port_name, port_type)
+             self.port_table.update({port_name: {'type': port_type,
+                                                 'vnic': None,
+                                                 'state': None,}})
+ 
+         def plug_nic(self, port_name):
++            LOG.error("NGKIM plug_nic port_name= %s port_policy= %s", port_name, self.port_policy)
+             self.port_table[port_name]['state'] = constants.VPORT_STATE_ATTACHED
+ 
+         def get_ports(self):
+@@ -71,6 +71,7 @@
+         
+         def create_vnic(self, vnic_mac):
+             if not self.vnic_exists(vnic_mac):
++                LOG.error("NGKIM eswitch_db create_vnic vnic= %s", vnic_mac)
+                 self.port_policy.update({vnic_mac: {'vlan':None,'dev':None,
+                                                     'device_id':None,
+                                                     'port_id':None,
+@@ -96,6 +97,7 @@
+          
+         def get_dev_for_vnic(self, vnic_mac):
+             dev = None
++            LOG.error("NGKIM get_dev_for_vnic vnic_mac= %s port_policy= %s", vnic_mac, self.port_policy)
+             if vnic_mac in self.port_policy:
+                 if 'dev' in self.port_policy[vnic_mac]:
+                     dev = self.port_policy[vnic_mac]['dev']
+diff -urN eswitchd-mlnx/eswitch_handler.py eswitchd-intel/eswitch_handler.py
+--- eswitchd-mlnx/eswitch_handler.py	2013-06-12 13:21:31.304462768 +0900
++++ eswitchd-intel/eswitch_handler.py	2013-07-16 01:05:35.609082739 +0900
+@@ -53,9 +53,7 @@
+         devices = self.rm.scan_attached_devices()
+         added_devs = {}
+         removed_devs = {}
+-        LOG.error("NGKIM sync_devices 1")
+         for type, devs in devices.items():
+-            LOG.error("NGKIM sync_devices type= %s devs= %s", type, devs)
+             added_devs[type] = set(devs)-self.devices[type]
+             removed_devs[type] = self.devices[type]-set(devs)      
+             self._treat_added_devices(added_devs[type],type)
+@@ -105,10 +103,8 @@
+     def get_vnics(self, fabrics):
+         vnics = {}
+         for fabric in fabrics:
+-            LOG.error("NGKIM get_vnics fabric= %s", fabric)
+             eswitch = self._get_vswitch_for_fabric(fabric)
+             if eswitch:
+-                LOG.error("NGKIM get_vnics eswitch= %s", eswitch)
+                 vnics_for_eswitch = eswitch.get_attached_vnics()
+                 vnics.update(vnics_for_eswitch)
+             else:
+@@ -119,19 +115,23 @@
+ 
+     def create_port(self, fabric, vnic_type, device_id, vnic_mac):
+         dev = None
++        LOG.error("NGKIM create_port fabric= %s vnic_type= %s device_id= %s vnic_mac= %s", fabric, vnic_type, device_id, vnic_mac)
+         eswitch = self._get_vswitch_for_fabric(fabric)
+         if eswitch:
+             dev = eswitch.get_dev_for_vnic(vnic_mac)
+             if not dev:
+                 try:
+                     dev = self.rm.allocate_device(fabric, vnic_type)
++                    LOG.error("NGKIM create_port call eswitch.attch_vnic")
+                     if eswitch.attach_vnic(dev, device_id, vnic_mac):
++                        LOG.error("NGKIM create_port OK")
+                         pf, vf_index = self._get_device_pf_vf(fabric, vnic_type, dev)
+                         if vnic_type == constants.VIF_TYPE_HOSTDEV:
+                             self._config_vf_mac_address(pf, vf_index, vnic_mac)
+                         acl_rules = eswitch.get_acls_for_vnic(vnic_mac)
+                         self.acl_handler.set_acl_rules(pf, acl_rules)
+                     else:
++                        LOG.error("NGKIM create_port Fail")
+                         raise MlxException('Failed to attach vnic')
+                 except (RuntimeError, MlxException):
+                     LOG.error('Create port operation failed ')
+@@ -139,15 +139,25 @@
+                     dev = None                                
+         else:
+             LOG.error("No eSwitch found for Fabric %s",fabric)
++        LOG.error("NGKIM create_port return")
+         return dev
+     
+     def plug_nic(self, fabric, device_id, vnic_mac):
+         dev = None
++        LOG.error("NGKIM plug_nic fabric= %s device_id= %s", fabric, device_id)
+         eswitch = self._get_vswitch_for_fabric(fabric)
+         if eswitch:
++            LOG.error("NGKIM plug_nic vnic_mac= %s", vnic_mac)
+             dev = eswitch.get_dev_for_vnic(vnic_mac)
+-            if dev:
+-                eswitch.plug_nic(dev)
++            LOG.error("NGKIM plug_nic dev= %s", dev)
++            try:
++                if dev:
++                    # Unbind dev
++                    LOG.error("NGKIM plug_nic unbind dev= %s", dev)
++                    self.pci_utils.set_vf_binding(dev, True)
++                    eswitch.plug_nic(dev)
++            except Exception:
++                LOG.error('Failed to plug nic')
+         else:
+             LOG.error("No eSwitch found for Fabric %s",fabric)
+         return dev
+@@ -180,7 +190,16 @@
+         eswitch = self._get_vswitch_for_fabric(fabric)
+         eswitch.port_release(vnic_mac)
+         return ret
+-    
++
++    def port_up(self,fabric,vnic_mac):
++        eswitch = self._get_vswitch_for_fabric(fabric)
++        if eswitch:
++            dev = eswitch.get_dev_for_vnic(vnic_mac)
++            if dev: 
++                self._config_port_up(dev)
++            else:
++                LOG.debug("No device for MAC %s",vnic_mac)
++     
+     def port_down(self,fabric,vnic_mac):
+         eswitch = self._get_vswitch_for_fabric(fabric)
+         if eswitch:
+diff -urN eswitchd-mlnx/msg_handler.py eswitchd-intel/msg_handler.py
+--- eswitchd-mlnx/msg_handler.py	2013-06-12 00:44:19.544115228 +0900
++++ eswitchd-intel/msg_handler.py	2013-07-16 01:05:35.709082671 +0900
+@@ -67,6 +67,7 @@
+         vnic_type  = self.msg['vnic_type']
+         device_id  = self.msg['device_id']
+         vnic_mac   = (self.msg['vnic_mac']).lower() 
++        #LOG.error("NGKIM action= create_port fabric= %s vnic_type= %s device_id= %s vnic_mac= %s", fabric, vnic_type, device_id, vnic_mac)
+         dev = eSwitchHandler.create_port(fabric, vnic_type, device_id, vnic_mac)
+         if dev:
+             return self.build_response(True, response= {'dev':dev})
+@@ -83,7 +84,10 @@
+         fabric     = self.msg['fabric']
+         device_id  = self.msg['device_id']
+         vnic_mac   = (self.msg['vnic_mac']).lower() 
++        #LOG.error("NGKIM action= plug_nic fabric= %s device_id= %s vnic_mac= %s", fabric, device_id, vnic_mac)
++
+         dev = eSwitchHandler.plug_nic(fabric, device_id, vnic_mac)
++
+         if dev:
+             return self.build_response(True, response= {'dev':dev})
+         else:
+@@ -200,6 +204,7 @@
+         fabric     = self.msg['fabric']
+         ref_by   = self.msg['ref_by']
+         mac   = self.msg['mac']
++
+         return self.build_response(True, response = {})
+ 
+ class PortDown(BasicMessageHandler):
+@@ -301,7 +306,7 @@
+         LOG.debug("Handling message - %s",msg)
+         result = {}
+         action = msg.pop('action')
+-        
++        LOG.error("NGKIM action= %s", action) 
+         if action in MessageDispatch.MSG_MAP.keys():
+             msg_handler = MessageDispatch.MSG_MAP[action](msg)
+             if msg_handler.validate():
+diff -urN eswitchd-mlnx/utils/command_utils.py eswitchd-intel/utils/command_utils.py
+--- eswitchd-mlnx/utils/command_utils.py	2013-06-12 00:44:19.544115228 +0900
++++ eswitchd-intel/utils/command_utils.py	2013-07-16 01:05:35.625082634 +0900
+@@ -49,4 +49,37 @@
+         raise RuntimeError(m)
+     return return_stderr and (_stdout, _stderr) or _stdout
+ 
++def execute_shell(cmd, root_helper=None, process_input=None, addl_env=None,
++            check_exit_code=True, return_stderr=False):
+ 
++    if root_helper:
++        cmd = shlex.split(root_helper) + cmd
++    cmd = map(str, cmd)
++    LOG.error("NGKIM: Running command: " + " ".join(cmd))
++
++    env = os.environ.copy()
++    if addl_env:
++        env.update(addl_env)
++
++    #obj = subprocess.Popen(cmd, shell=True, stdin=subprocess.PIPE,
++    #                       stdout=subprocess.PIPE, stderr=subprocess.PIPE,
++    #                       env=env)
++
++
++    obj = subprocess.Popen(cmd, shell=True, stdin=subprocess.PIPE,
++                           stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
++                           env=env)
++
++    _stdout, _stderr = (process_input and
++                        obj.communicate(process_input) or
++                        obj.communicate())
++
++    obj.stdin.close()
++    m = ("\nCommand: %s\nExit code: %s\nStdout: %r\nStderr: %r" %
++        (cmd, obj.returncode, _stdout, _stderr))
++
++    LOG.debug(m)
++    if obj.returncode and check_exit_code:
++        raise RuntimeError(m)
++
++    return return_stderr and (_stdout, _stderr) or _stdout
+diff -urN eswitchd-mlnx/utils/pci_utils.py eswitchd-intel/utils/pci_utils.py
+--- eswitchd-mlnx/utils/pci_utils.py	2013-06-13 00:56:24.134665198 +0900
++++ eswitchd-intel/utils/pci_utils.py	2013-07-16 01:05:35.613082708 +0900
+@@ -27,10 +27,12 @@
+     ETH_PF_NETDEV = "/sys/class/net/DEV/device/physfn/net"
+     ETH_VF =        "/sys/class/net/ETH/device"
+     ETH_PORT =      "/sys/class/net/ETH/dev_id"
+-    VF_BIND_PATH   =  "/sys/bus/pci/drivers/pci-stub/bind"
+-    VF_UNBIND_PATH =  "/sys/bus/pci/drivers/pci-stub/unbind"
+     VF_BIND_DRIVER  = "/sys/bus/pci/devices/VF/driver/bind"
+     VF_UNBIND_DRIVER  = "/sys/bus/pci/devices/VF/driver/unbind"
++    VF_BIND_PATH   =  "/sys/bus/pci/drivers/pci-stub/bind"
++    VF_UNBIND_PATH =  "/sys/bus/pci/drivers/pci-stub/unbind"
++    VF_NEW_ID_PATH = "/sys/bus/pci/drivers/pci-stub/new_id"
++    VF_REMOVE_ID_PATH = "/sys/bus/pci/drivers/pci-stub/remove_id"
+    
+     def __init__(self):
+         pass
+@@ -110,16 +112,22 @@
+ 
+     def set_vf_binding(self, vf, is_bind=False):
+         if is_bind:
+-            cmd = ["echo", vf, ">",pciUtils.VF_UNBIND_PATH]
+-            cmd_driver = ["echo", vf, ">",pciUtils.VF_BIND_DRIVER.replace("VF", vf)]
++            cmd_new_id = ['echo', '8086 10ed', '>', pciUtils.VF_NEW_ID_PATH]
++            cmd_driver = ['echo', vf, '>',pciUtils.VF_UNBIND_DRIVER.replace("VF", vf)]
++            cmd_pci = ['echo', vf, '>',pciUtils.VF_BIND_PATH]
+         else:
+-            cmd = ["echo", vf, ">",pciUtils.VF_BIND_PATH]
+-            cmd_driver = ["echo", vf, ">",pciUtils.VF_UNBIND_DRIVER.replace("VF", vf)]
++            cmd_driver = ['echo', vf, '>',pciUtils.VF_BIND_DRIVER.replace("VF", vf)]
++            cmd_pci = ['echo', vf, '>',pciUtils.VF_UNBIND_PATH]
+ 
+         try:
+             LOG.error("NGKIM self_vf_binding vf= %s", vf)
+-            result = execute(cmd, root_helper='sudo')
+-            result = execute(cmd_driver, root_helper='sudo')
++            if is_bind:
++                os.system("echo %s > %s" % (vf, pciUtils.VF_UNBIND_DRIVER.replace("VF", vf)))
++                os.system("echo %s > %s" % (vf, pciUtils.VF_BIND_PATH))
++            else:
++                result = execute_shell(cmd_driver, root_helper='sudo')
++                result = execute_shell(cmd_pci, root_helper='sudo')
++                 
+         except Exception,e:
+             LOG.warning("Failed to execute command %s due to %s",cmd,e)
+             raise
+diff -urN eswitchd-mlnx/utils/test.py eswitchd-intel/utils/test.py
+--- eswitchd-mlnx/utils/test.py	1970-01-01 09:00:00.000000000 +0900
++++ eswitchd-intel/utils/test.py	2013-07-16 01:05:35.621082650 +0900
+@@ -0,0 +1,82 @@
++# vim: tabstop=4 shiftwidth=4 softtabstop=4
++#
++# Copyright 2013 Mellanox Technologies, Ltd
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++#    http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
++# implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
++
++import os
++import re
++#from nova.openstack.common import log as logging
++import logging
++from command_utils import execute_shell
++
++LOG = logging.getLogger('myapp')
++hdlr = logging.FileHandler('/var/log/test.log')
++formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
++hdlr.setFormatter(formatter)
++LOG.addHandler(hdlr) 
++LOG.setLevel(logging.WARNING)
++
++class pciUtils:
++    ETH_PF_NETDEV = "/sys/class/net/DEV/device/physfn/net"
++    ETH_VF =        "/sys/class/net/ETH/device"
++    ETH_PORT =      "/sys/class/net/ETH/dev_id"
++    VF_BIND_DRIVER  = "/sys/bus/pci/devices/VF/driver/bind"
++    VF_UNBIND_DRIVER  = "/sys/bus/pci/devices/VF/driver/unbind"
++    VF_BIND_PATH   =  "/sys/bus/pci/drivers/pci-stub/bind"
++    VF_UNBIND_PATH =  "/sys/bus/pci/drivers/pci-stub/unbind"
++    VF_NEW_ID_PATH = "/sys/bus/pci/drivers/pci-stub/new_id"
++    VF_REMOVE_ID_PATH = "/sys/bus/pci/drivers/pci-stub/remove_id"
++   
++    def __init__(self):
++        pass
++
++    def set_vf_binding(self, vf, is_bind=False):
++        cmd = []
++        if is_bind:
++            cmd_new_id = ['echo', '8086 10ed', '>', pciUtils.VF_NEW_ID_PATH]
++            cmd_driver = ['echo', vf, '>',pciUtils.VF_UNBIND_DRIVER.replace("VF", vf)]
++            cmd_pci = ['echo', vf, '>',pciUtils.VF_BIND_PATH]
++        else:
++            cmd_driver = ['echo', vf, '>',pciUtils.VF_BIND_DRIVER.replace("VF", vf)]
++            cmd_pci = ['echo', vf, '>',pciUtils.VF_UNBIND_PATH]
++
++        try:
++            LOG.error("NGKIM self_vf_binding vf= %s", vf)
++            if is_bind:
++                #os.system("echo \"8086 10ed\" > %s" % pciUtils.VF_NEW_ID_PATH)
++                os.system("echo %s > %s" % (vf, pciUtils.VF_UNBIND_DRIVER.replace("VF", vf)))
++                os.system("echo %s > %s" % (vf, pciUtils.VF_BIND_PATH))
++                #cmd = cmd_new_id
++                #result = execute_shell(cmd)
++                #cmd = cmd_driver
++                #result = execute_shell(cmd)
++                #cmd = cmd_pci
++                #result = execute_shell(cmd)
++            else:
++                cmd = cmd_driver
++                result = execute_shell(cmd)
++                cmd = cmd_pci
++                result = execute_shell(cmd)
++                 
++        except Exception,e:
++            LOG.warning("Failed to execute command %s due to %s" % (cmd,e))
++            raise
++
++def main():
++    pci_util = pciUtils()
++    pci_util.set_vf_binding("0000:04:11.4", True)
++
++if __name__ == "__main__":
++    main() 

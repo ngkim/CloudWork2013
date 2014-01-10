@@ -1,0 +1,32 @@
+# This file describes the network interfaces available on your system
+# and how to activate them. For more information, see interfaces(5).
+
+# The loopback network interface
+auto lo
+iface lo inet loopback
+
+auto em1
+iface em1 inet static
+	address 100.10.10.53
+	netmask 255.255.255.0
+
+# The primary network interface
+auto em2
+iface em2 inet manual
+	up ifconfig $IFACE 0.0.0.0 up
+	up ip link set $IFACE promisc on
+	down ip link set $IFACE promisc off
+	down ifconfig $IFACE down
+#	address 210.183.241.163
+#	netmask 255.255.255.0
+#	network 210.183.241.0
+#	broadcast 210.183.241.255
+#	gateway 210.183.241.190
+	# dns-* options are implemented by the resolvconf package, if installed
+#	dns-nameservers 8.8.8.8
+
+auto p5p1
+iface p5p1 inet static
+        address 100.20.20.53
+        netmask 255.255.255.0
+

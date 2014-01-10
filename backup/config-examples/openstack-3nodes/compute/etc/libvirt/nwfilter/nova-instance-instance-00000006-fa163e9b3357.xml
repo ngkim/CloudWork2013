@@ -1,0 +1,11 @@
+<!--
+WARNING: THIS IS AN AUTO-GENERATED FILE. CHANGES TO IT ARE LIKELY TO BE 
+OVERWRITTEN AND LOST. Changes to this xml configuration should be made using:
+  virsh nwfilter-edit nova-instance-instance-00000006-fa163e9b3357
+or other application using the libvirt API.
+-->
+
+<filter name='nova-instance-instance-00000006-fa163e9b3357' chain='root'>
+  <uuid>680c60ca-fade-35e3-00c6-cc5055a2b7be</uuid>
+  <filterref filter='nova-base'/>
+</filter>

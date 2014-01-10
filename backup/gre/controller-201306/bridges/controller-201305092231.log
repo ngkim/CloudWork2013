@@ -1,0 +1,61 @@
+****************************************
+ Linux Bridges
+****************************************
+bridge name	bridge id		STP enabled	interfaces
+br-ex		0000.e4115bd4b07e	no		
+br-int		0000.da8c2ac5294a	no		
+br-tun		0000.121495a7eb48	no		
+qbrb77f93ec-1c		8000.0652abdcb62e	no		qvbb77f93ec-1c
+							tapb77f93ec-1c
+qbrc359a31a-cb		8000.eef6a2d3a4a2	no		qvbc359a31a-cb
+							tapc359a31a-cb
+
+
+****************************************
+ Open vSwitch
+****************************************
+7e0a156d-1e48-42b8-8699-bbb8a5e10e19
+    Bridge br-ex
+        Port "em4"
+            Interface "em4"
+        Port br-ex
+            Interface br-ex
+                type: internal
+        Port "qg-bd9dba5c-fe"
+            Interface "qg-bd9dba5c-fe"
+                type: internal
+    Bridge br-tun
+        Port br-tun
+            Interface br-tun
+                type: internal
+        Port "gre-2"
+            Interface "gre-2"
+                type: gre
+                options: {in_key=flow, out_key=flow, remote_ip="10.20.20.52"}
+        Port patch-int
+            Interface patch-int
+                type: patch
+                options: {peer=patch-tun}
+    Bridge br-int
+        Port "qvob77f93ec-1c"
+            tag: 1
+            Interface "qvob77f93ec-1c"
+        Port "tape37a6583-b3"
+            tag: 1
+            Interface "tape37a6583-b3"
+                type: internal
+        Port "qr-3c00e5a1-5b"
+            tag: 1
+            Interface "qr-3c00e5a1-5b"
+                type: internal
+        Port patch-tun
+            Interface patch-tun
+                type: patch
+                options: {peer=patch-int}
+        Port "qvoc359a31a-cb"
+            tag: 1
+            Interface "qvoc359a31a-cb"
+        Port br-int
+            Interface br-int
+                type: internal
+    ovs_version: "1.9.0"

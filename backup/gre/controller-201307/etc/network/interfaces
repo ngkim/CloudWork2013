@@ -1,0 +1,35 @@
+# This file describes the network interfaces available on your system
+# and how to activate them. For more information, see interfaces(5).
+
+# The loopback network interface
+auto lo
+iface lo inet loopback
+
+# The primary network interface
+auto em1
+iface em1 inet static
+	address 211.224.204.141
+	netmask 255.255.255.224
+	gateway 211.224.204.129
+	# dns-* options are implemented by the resolvconf package, if installed
+	dns-nameservers 8.8.8.8
+
+# VM Configuration
+auto em2
+iface em2 inet static
+	address 10.10.10.51
+	netmask 255.255.255.0
+
+#Not internet connected(used for OpenStack management)
+auto em3  
+iface em3 inet static
+	address 10.20.20.51
+	netmask 255.255.255.0
+
+auto em4
+iface em4 inet manual
+	up ifconfig $IFACE 0.0.0.0 up
+	up ip link set $IFACE promisc on
+	down ip link set $IFACE promisc off
+	down ifconfig $IFACE down
+

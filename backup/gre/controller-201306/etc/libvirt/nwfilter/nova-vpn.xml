@@ -1,0 +1,11 @@
+<!--
+WARNING: THIS IS AN AUTO-GENERATED FILE. CHANGES TO IT ARE LIKELY TO BE
+OVERWRITTEN AND LOST. Changes to this xml configuration should be made using:
+  virsh nwfilter-edit nova-vpn
+or other application using the libvirt API.
+-->
+
+<filter name='nova-vpn' chain='root'>
+  <uuid>d40a5540-c745-78ae-5244-3dabc15b9a9e</uuid>
+  <filterref filter='allow-dhcp-server'/>
+</filter>

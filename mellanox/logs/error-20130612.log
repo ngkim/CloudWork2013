@@ -1,0 +1,32 @@
+root@oz-controller:~/creds# quantum agent-list
++--------------------------------------+--------------------+----------------+-------+----------------+
+| id                                   | agent_type         | host           | alive | admin_state_up |
++--------------------------------------+--------------------+----------------+-------+----------------+
+| 2462f048-28e6-4135-843f-dbb4ae5e5f5c | eSwitch agent      | oz-controller  | :-)   | True           |
+| 6164032a-7335-4ec2-a39e-9958bf96aa83 | Open vSwitch agent | oz-controller  | :-)   | True           |
+| 661fe222-5825-4594-a201-448e2e53b898 | Open vSwitch agent | CloudTBManager | :-)   | True           |
+| a73c4555-32a5-4da0-9e92-45bd8f2dadf0 | DHCP agent         | oz-controller  | :-)   | True           |
+| ad466fca-75c6-443f-9f4b-0fa77bba2962 | L3 agent           | oz-controller  | :-)   | True           |
+| d20a311e-9dde-49a8-b4c7-d35942a955c6 | eSwitch agent      | CloudTBManager | :-)   | True           |
++--------------------------------------+--------------------+----------------+-------+----------------+
+root@oz-controller:~/creds# quantum router-list
++--------------------------------------+-----------------+--------------------------------------------------------+
+| id                                   | name            | external_gateway_info                                  |
++--------------------------------------+-----------------+--------------------------------------------------------+
+| a6b99c85-e397-402b-bc02-7085502127ba | router_proj_one | {"network_id": "588041b4-408f-4b39-b783-96efb5bd3853"} |
++--------------------------------------+-----------------+--------------------------------------------------------+
+root@oz-controller:~/creds# qu
+quantum                                  quantum-ns-metadata-proxy
+quantum-db-manage                        quantum-openvswitch-agent
+quantum-debug                            quantum-ovs-cleanup
+quantum-dhcp-agent                       quantum-rootwrap
+quantum-dhcp-agent-dnsmasq-lease-update  quantum-server
+quantum-l3-agent                         quantum-usage-audit
+quantum-mellanox-agent                   quote
+quantum-metadata-agent                   quote_readline
+quantum-netns-cleanup                    
+root@oz-controller:~/creds# quantum l3-agent-router-add ad466fca-75c6-443f-9f4b-0fa77bba2962 router_proj_one
+404 Not Found
+
+The resource could not be found.
+

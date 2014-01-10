@@ -1,0 +1,87 @@
+<!--
+WARNING: THIS IS AN AUTO-GENERATED FILE. CHANGES TO IT ARE LIKELY TO BE
+OVERWRITTEN AND LOST. Changes to this xml configuration should be made using:
+  virsh edit instance-00000082
+or other application using the libvirt API.
+-->
+
+<domain type='kvm'>
+  <name>instance-00000082</name>
+  <uuid>7cdd24cb-c603-4986-9b6b-2b3d87d803e6</uuid>
+  <memory unit='KiB'>524288</memory>
+  <currentMemory unit='KiB'>524288</currentMemory>
+  <vcpu placement='static'>1</vcpu>
+  <sysinfo type='smbios'>
+    <system>
+      <entry name='manufacturer'>OpenStack Foundation</entry>
+      <entry name='product'>OpenStack Nova</entry>
+      <entry name='version'>2013.1.2</entry>
+      <entry name='serial'>37333336-3737-4e43-3731-343830475631</entry>
+      <entry name='uuid'>7cdd24cb-c603-4986-9b6b-2b3d87d803e6</entry>
+    </system>
+  </sysinfo>
+  <os>
+    <type arch='x86_64' machine='pc-i440fx-1.4'>hvm</type>
+    <boot dev='hd'/>
+    <smbios mode='sysinfo'/>
+  </os>
+  <features>
+    <acpi/>
+    <apic/>
+  </features>
+  <cpu mode='host-model'>
+    <model fallback='allow'/>
+  </cpu>
+  <clock offset='utc'>
+    <timer name='pit' tickpolicy='delay'/>
+    <timer name='rtc' tickpolicy='catchup'/>
+  </clock>
+  <on_poweroff>destroy</on_poweroff>
+  <on_reboot>restart</on_reboot>
+  <on_crash>destroy</on_crash>
+  <devices>
+    <emulator>/usr/bin/kvm</emulator>
+    <disk type='file' device='disk'>
+      <driver name='qemu' type='qcow2' cache='none'/>
+      <source file='/var/lib/nova/instances/7cdd24cb-c603-4986-9b6b-2b3d87d803e6/disk'/>
+      <target dev='vda' bus='virtio'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x04' function='0x0'/>
+    </disk>
+    <controller type='usb' index='0'>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x01' function='0x2'/>
+    </controller>
+    <interface type='bridge'>
+      <mac address='fa:16:3e:05:3e:6e'/>
+      <source bridge='br-int'/>
+      <virtualport type='openvswitch'>
+        <parameters interfaceid='f8f561ea-e822-4d8a-a3da-4c53580aedbf'/>
+      </virtualport>
+      <target dev='tapf8f561ea-e8'/>
+      <model type='virtio'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x03' function='0x0'/>
+    </interface>
+    <serial type='file'>
+      <source path='/var/lib/nova/instances/7cdd24cb-c603-4986-9b6b-2b3d87d803e6/console.log'/>
+      <target port='0'/>
+    </serial>
+    <serial type='pty'>
+      <target port='1'/>
+    </serial>
+    <console type='file'>
+      <source path='/var/lib/nova/instances/7cdd24cb-c603-4986-9b6b-2b3d87d803e6/console.log'/>
+      <target type='serial' port='0'/>
+    </console>
+    <input type='tablet' bus='usb'/>
+    <input type='mouse' bus='ps2'/>
+    <graphics type='vnc' port='-1' autoport='yes' listen='0.0.0.0' keymap='en-us'>
+      <listen type='address' address='0.0.0.0'/>
+    </graphics>
+    <video>
+      <model type='cirrus' vram='9216' heads='1'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x02' function='0x0'/>
+    </video>
+    <memballoon model='virtio'>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x05' function='0x0'/>
+    </memballoon>
+  </devices>
+</domain>

@@ -1,0 +1,16 @@
+<!--
+WARNING: THIS IS AN AUTO-GENERATED FILE. CHANGES TO IT ARE LIKELY TO BE
+OVERWRITTEN AND LOST. Changes to this xml configuration should be made using:
+  virsh nwfilter-edit nova-instance-instance-00000062-fa163e4b5ddc
+or other application using the libvirt API.
+-->
+
+<filter name='nova-instance-instance-00000062-fa163e4b5ddc' chain='root'>
+  <uuid>3102a946-5de9-a9b6-b7e0-3e1d987a1bbb</uuid>
+  <filterref filter='nova-base'>
+    <parameter name='DHCPSERVER' value='50.50.1.2'/>
+    <parameter name='IP' value='50.50.1.17'/>
+    <parameter name='PROJMASK' value='255.255.255.0'/>
+    <parameter name='PROJNET' value='50.50.1.0'/>
+  </filterref>
+</filter>

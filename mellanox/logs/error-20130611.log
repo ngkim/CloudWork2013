@@ -1,0 +1,19 @@
+root@oz-controller:~# tail -f /var/log/eswitchd/eswitchd.log 
+2013-06-12 02:56:08,977 ERROR Failed to start EswitchDaemon - Daemon terminated! Failed to connect socket to '/var/run/libvirt/libvirt-sock': No such file or directory
+^C
+root@oz-controller:~# virsh list
+ Id    Name                           State
+----------------------------------------------------
+
+root@oz-controller:~# ls /var/run/libvirt
+libvirt-sock  libvirt-sock-ro  qemu  uml-guest
+root@oz-controller:~# service e
+ebtables  eswitchd  
+root@oz-controller:~# service eswitchd start
+eswitchd start/running, process 12903
+root@oz-controller:~# service eswitchd status
+eswitchd stop/waiting
+root@oz-controller:~# tail -f /var/log/eswitchd/eswitchd.log 
+2013-06-12 03:04:27,827 ERROR Failed to start EswitchDaemon - Daemon terminated! Address already in use
+^C
+

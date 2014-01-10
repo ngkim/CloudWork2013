@@ -1,0 +1,6 @@
+etc/quantum/quantum.conf
+etc/quantum/api-paste.ini
+etc/quantum/l3_agent.ini
+etc/quantum/dhcp_agent.ini
+etc/quantum/metadata_agent.ini
+etc/quantum/plugins/openvswitch/ovs_quantum_plugin.ini

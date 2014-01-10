@@ -1,0 +1,58 @@
+****************************************
+ Linux Bridges
+****************************************
+bridge name	bridge id		STP enabled	interfaces
+br-int		0000.06659250eb4d	no		
+br-tun		0000.7e1bdb6d2248	no		
+qbr3a0cd3ca-94		8000.f2f02c2bf69d	no		qvb3a0cd3ca-94
+							tap3a0cd3ca-94
+qbr3f10842b-c8		8000.e23653f720bb	no		qvb3f10842b-c8
+							tap3f10842b-c8
+qbr414abd6a-03		8000.1a02687e3d66	no		qvb414abd6a-03
+							tap414abd6a-03
+qbr50236802-57		8000.3e4b70f821b2	no		qvb50236802-57
+							tap50236802-57
+qbrf58c63be-36		8000.fe163e23702d	no		qvbf58c63be-36
+							tapf58c63be-36
+
+
+****************************************
+ Open vSwitch
+****************************************
+755295a8-3d9a-46b6-9981-cf3b359c116b
+    Bridge br-int
+        Port "qvo3a0cd3ca-94"
+            tag: 1
+            Interface "qvo3a0cd3ca-94"
+        Port br-int
+            Interface br-int
+                type: internal
+        Port "qvo414abd6a-03"
+            tag: 1
+            Interface "qvo414abd6a-03"
+        Port patch-tun
+            Interface patch-tun
+                type: patch
+                options: {peer=patch-int}
+        Port "qvof58c63be-36"
+            tag: 3
+            Interface "qvof58c63be-36"
+        Port "qvo3f10842b-c8"
+            tag: 1
+            Interface "qvo3f10842b-c8"
+        Port "qvo50236802-57"
+            tag: 3
+            Interface "qvo50236802-57"
+    Bridge br-tun
+        Port "gre-1"
+            Interface "gre-1"
+                type: gre
+                options: {in_key=flow, out_key=flow, remote_ip="10.20.20.51"}
+        Port br-tun
+            Interface br-tun
+                type: internal
+        Port patch-int
+            Interface patch-int
+                type: patch
+                options: {peer=patch-tun}
+    ovs_version: "1.9.0"

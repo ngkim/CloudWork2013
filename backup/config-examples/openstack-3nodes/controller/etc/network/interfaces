@@ -1,0 +1,22 @@
+# This file describes the network interfaces available on your system
+# and how to activate them. For more information, see interfaces(5).
+
+# The loopback network interface
+auto lo
+iface lo inet loopback
+
+# The primary network interface
+auto em2
+iface em2 inet static
+	address 210.183.241.161
+	netmask 255.255.255.0
+	network 210.183.241.0
+	broadcast 210.183.241.255
+	gateway 210.183.241.190
+	# dns-* options are implemented by the resolvconf package, if installed
+	dns-nameservers 8.8.8.8
+
+auto em1
+iface em1 inet static
+	address 100.10.10.51
+	netmask 255.255.255.0

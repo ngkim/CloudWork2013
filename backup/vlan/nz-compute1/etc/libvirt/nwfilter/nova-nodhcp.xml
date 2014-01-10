@@ -1,0 +1,13 @@
+<!--
+WARNING: THIS IS AN AUTO-GENERATED FILE. CHANGES TO IT ARE LIKELY TO BE
+OVERWRITTEN AND LOST. Changes to this xml configuration should be made using:
+  virsh nwfilter-edit nova-nodhcp
+or other application using the libvirt API.
+-->
+
+<filter name='nova-nodhcp' chain='root'>
+  <uuid>5bf472c6-940c-24c6-5c06-7bcd98d07f00</uuid>
+  <filterref filter='no-mac-spoofing'/>
+  <filterref filter='no-ip-spoofing'/>
+  <filterref filter='no-arp-spoofing'/>
+</filter>

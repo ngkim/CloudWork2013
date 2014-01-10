@@ -1,0 +1,14 @@
+<!--
+WARNING: THIS IS AN AUTO-GENERATED FILE. CHANGES TO IT ARE LIKELY TO BE
+OVERWRITTEN AND LOST. Changes to this xml configuration should be made using:
+  virsh nwfilter-edit nova-base
+or other application using the libvirt API.
+-->
+
+<filter name='nova-base' chain='root'>
+  <uuid>9c7c65e2-0496-eb84-2284-46f1960402ca</uuid>
+  <filterref filter='no-mac-spoofing'/>
+  <filterref filter='no-ip-spoofing'/>
+  <filterref filter='no-arp-spoofing'/>
+  <filterref filter='allow-dhcp-server'/>
+</filter>

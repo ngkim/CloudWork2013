@@ -1,0 +1,38 @@
+****************************************
+ Linux Bridges
+****************************************
+bridge name	bridge id		STP enabled	interfaces
+br-int		0000.06659250eb4d	no		
+br-tun		0000.3a4c6424be4f	no		
+qbr0373a6e1-10		8000.9a770c1a0d5b	no		qvb0373a6e1-10
+							tap0373a6e1-10
+
+
+****************************************
+ Open vSwitch
+****************************************
+755295a8-3d9a-46b6-9981-cf3b359c116b
+    Bridge br-tun
+        Port "gre-1"
+            Interface "gre-1"
+                type: gre
+                options: {in_key=flow, out_key=flow, remote_ip="10.20.20.51"}
+        Port br-tun
+            Interface br-tun
+                type: internal
+        Port patch-int
+            Interface patch-int
+                type: patch
+                options: {peer=patch-tun}
+    Bridge br-int
+        Port br-int
+            Interface br-int
+                type: internal
+        Port "qvo0373a6e1-10"
+            tag: 1
+            Interface "qvo0373a6e1-10"
+        Port patch-tun
+            Interface patch-tun
+                type: patch
+                options: {peer=patch-int}
+    ovs_version: "1.9.0"

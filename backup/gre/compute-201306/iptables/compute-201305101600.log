@@ -1,0 +1,141 @@
+****************************************
+ iptables rules
+****************************************
+Chain INPUT (policy ACCEPT)
+target     prot opt source               destination         
+nova-compute-INPUT  all  --  anywhere             anywhere            
+
+Chain FORWARD (policy ACCEPT)
+target     prot opt source               destination         
+nova-filter-top  all  --  anywhere             anywhere            
+nova-compute-FORWARD  all  --  anywhere             anywhere            
+
+Chain OUTPUT (policy ACCEPT)
+target     prot opt source               destination         
+nova-filter-top  all  --  anywhere             anywhere            
+nova-compute-OUTPUT  all  --  anywhere             anywhere            
+
+Chain nova-compute-FORWARD (1 references)
+target     prot opt source               destination         
+ACCEPT     udp  --  default              255.255.255.255      udp spt:bootpc dpt:bootps
+
+Chain nova-compute-INPUT (1 references)
+target     prot opt source               destination         
+ACCEPT     udp  --  default              255.255.255.255      udp spt:bootpc dpt:bootps
+
+Chain nova-compute-OUTPUT (1 references)
+target     prot opt source               destination         
+
+Chain nova-compute-inst-11 (1 references)
+target     prot opt source               destination         
+DROP       all  --  anywhere             anywhere             state INVALID
+ACCEPT     all  --  anywhere             anywhere             state RELATED,ESTABLISHED
+nova-compute-provider  all  --  anywhere             anywhere            
+ACCEPT     udp  --  ge2-0.drr02.snpr.wi.frontiernet.net  anywhere             udp spt:bootps dpt:bootpc
+ACCEPT     all  --  50.50.1.0/24         anywhere            
+ACCEPT     icmp --  anywhere             anywhere            
+ACCEPT     tcp  --  anywhere             anywhere             tcp dpt:ssh
+nova-compute-sg-fallback  all  --  anywhere             anywhere            
+
+Chain nova-compute-inst-19 (1 references)
+target     prot opt source               destination         
+DROP       all  --  anywhere             anywhere             state INVALID
+ACCEPT     all  --  anywhere             anywhere             state RELATED,ESTABLISHED
+nova-compute-provider  all  --  anywhere             anywhere            
+ACCEPT     udp  --  ge2-0.drr02.snpr.wi.frontiernet.net  anywhere             udp spt:bootps dpt:bootpc
+ACCEPT     all  --  50.50.1.0/24         anywhere            
+ACCEPT     icmp --  anywhere             anywhere            
+ACCEPT     tcp  --  anywhere             anywhere             tcp dpt:ssh
+nova-compute-sg-fallback  all  --  anywhere             anywhere            
+
+Chain nova-compute-inst-20 (1 references)
+target     prot opt source               destination         
+DROP       all  --  anywhere             anywhere             state INVALID
+ACCEPT     all  --  anywhere             anywhere             state RELATED,ESTABLISHED
+nova-compute-provider  all  --  anywhere             anywhere            
+ACCEPT     udp  --  ge2-0.drr02.snpr.wi.frontiernet.net  anywhere             udp spt:bootps dpt:bootpc
+ACCEPT     all  --  50.50.1.0/24         anywhere            
+ACCEPT     icmp --  anywhere             anywhere            
+ACCEPT     tcp  --  anywhere             anywhere             tcp dpt:ssh
+nova-compute-sg-fallback  all  --  anywhere             anywhere            
+
+Chain nova-compute-inst-22 (1 references)
+target     prot opt source               destination         
+DROP       all  --  anywhere             anywhere             state INVALID
+ACCEPT     all  --  anywhere             anywhere             state RELATED,ESTABLISHED
+nova-compute-provider  all  --  anywhere             anywhere            
+ACCEPT     udp  --  221.145.180.65       anywhere             udp spt:bootps dpt:bootpc
+ACCEPT     all  --  221.145.180.64/26    anywhere            
+ACCEPT     tcp  --  anywhere             anywhere             tcp dpt:ssh
+ACCEPT     icmp --  anywhere             anywhere            
+nova-compute-sg-fallback  all  --  anywhere             anywhere            
+
+Chain nova-compute-inst-24 (1 references)
+target     prot opt source               destination         
+DROP       all  --  anywhere             anywhere             state INVALID
+ACCEPT     all  --  anywhere             anywhere             state RELATED,ESTABLISHED
+nova-compute-provider  all  --  anywhere             anywhere            
+ACCEPT     udp  --  221.145.180.65       anywhere             udp spt:bootps dpt:bootpc
+ACCEPT     all  --  221.145.180.64/26    anywhere            
+ACCEPT     tcp  --  anywhere             anywhere             tcp dpt:ssh
+ACCEPT     icmp --  anywhere             anywhere            
+nova-compute-sg-fallback  all  --  anywhere             anywhere            
+
+Chain nova-compute-local (1 references)
+target     prot opt source               destination         
+nova-compute-inst-11  all  --  anywhere             50.50.1.7           
+nova-compute-inst-19  all  --  anywhere             50.50.1.12          
+nova-compute-inst-20  all  --  anywhere             ge--6-0-1---0.car01.snpr.wi.frontiernet.net 
+nova-compute-inst-22  all  --  anywhere             221.145.180.71      
+nova-compute-inst-24  all  --  anywhere             221.145.180.72      
+
+Chain nova-compute-provider (5 references)
+target     prot opt source               destination         
+
+Chain nova-compute-sg-fallback (5 references)
+target     prot opt source               destination         
+DROP       all  --  anywhere             anywhere            
+
+Chain nova-filter-top (2 references)
+target     prot opt source               destination         
+nova-compute-local  all  --  anywhere             anywhere            
+
+
+****************************************
+ iptables NAT rules
+****************************************
+Chain PREROUTING (policy ACCEPT)
+target     prot opt source               destination         
+nova-compute-PREROUTING  all  --  anywhere             anywhere            
+
+Chain INPUT (policy ACCEPT)
+target     prot opt source               destination         
+
+Chain OUTPUT (policy ACCEPT)
+target     prot opt source               destination         
+nova-compute-OUTPUT  all  --  anywhere             anywhere            
+
+Chain POSTROUTING (policy ACCEPT)
+target     prot opt source               destination         
+nova-compute-POSTROUTING  all  --  anywhere             anywhere            
+nova-postrouting-bottom  all  --  anywhere             anywhere            
+
+Chain nova-compute-OUTPUT (1 references)
+target     prot opt source               destination         
+
+Chain nova-compute-POSTROUTING (1 references)
+target     prot opt source               destination         
+
+Chain nova-compute-PREROUTING (1 references)
+target     prot opt source               destination         
+
+Chain nova-compute-float-snat (1 references)
+target     prot opt source               destination         
+
+Chain nova-compute-snat (1 references)
+target     prot opt source               destination         
+nova-compute-float-snat  all  --  anywhere             anywhere            
+
+Chain nova-postrouting-bottom (1 references)
+target     prot opt source               destination         
+nova-compute-snat  all  --  anywhere             anywhere            

@@ -1,0 +1,74 @@
+****************************************
+ iptables rules
+****************************************
+Chain INPUT (policy ACCEPT)
+target     prot opt source               destination         
+nova-api-INPUT  all  --  anywhere             anywhere            
+ACCEPT     gre  --  anywhere             anywhere            
+
+Chain FORWARD (policy ACCEPT)
+target     prot opt source               destination         
+nova-filter-top  all  --  anywhere             anywhere            
+nova-api-FORWARD  all  --  anywhere             anywhere            
+
+Chain OUTPUT (policy ACCEPT)
+target     prot opt source               destination         
+nova-filter-top  all  --  anywhere             anywhere            
+nova-api-OUTPUT  all  --  anywhere             anywhere            
+
+Chain nova-api-FORWARD (1 references)
+target     prot opt source               destination         
+
+Chain nova-api-INPUT (1 references)
+target     prot opt source               destination         
+ACCEPT     tcp  --  anywhere             tst-goss6.tst-goss6  tcp dpt:8775
+
+Chain nova-api-OUTPUT (1 references)
+target     prot opt source               destination         
+
+Chain nova-api-local (1 references)
+target     prot opt source               destination         
+
+Chain nova-filter-top (2 references)
+target     prot opt source               destination         
+nova-api-local  all  --  anywhere             anywhere            
+
+
+****************************************
+ iptables NAT rules
+****************************************
+Chain PREROUTING (policy ACCEPT)
+target     prot opt source               destination         
+nova-api-PREROUTING  all  --  anywhere             anywhere            
+
+Chain INPUT (policy ACCEPT)
+target     prot opt source               destination         
+
+Chain OUTPUT (policy ACCEPT)
+target     prot opt source               destination         
+nova-api-OUTPUT  all  --  anywhere             anywhere            
+
+Chain POSTROUTING (policy ACCEPT)
+target     prot opt source               destination         
+nova-api-POSTROUTING  all  --  anywhere             anywhere            
+nova-postrouting-bottom  all  --  anywhere             anywhere            
+
+Chain nova-api-OUTPUT (1 references)
+target     prot opt source               destination         
+
+Chain nova-api-POSTROUTING (1 references)
+target     prot opt source               destination         
+
+Chain nova-api-PREROUTING (1 references)
+target     prot opt source               destination         
+
+Chain nova-api-float-snat (1 references)
+target     prot opt source               destination         
+
+Chain nova-api-snat (1 references)
+target     prot opt source               destination         
+nova-api-float-snat  all  --  anywhere             anywhere            
+
+Chain nova-postrouting-bottom (1 references)
+target     prot opt source               destination         
+nova-api-snat  all  --  anywhere             anywhere            

@@ -1,0 +1,142 @@
+****************************************
+ iptables rules
+****************************************
+Chain INPUT (policy ACCEPT)
+target     prot opt source               destination         
+nova-compute-INPUT  all  --  anywhere             anywhere            
+nova-api-INPUT  all  --  anywhere             anywhere            
+
+Chain FORWARD (policy ACCEPT)
+target     prot opt source               destination         
+nova-filter-top  all  --  anywhere             anywhere            
+nova-compute-FORWARD  all  --  anywhere             anywhere            
+nova-api-FORWARD  all  --  anywhere             anywhere            
+
+Chain OUTPUT (policy ACCEPT)
+target     prot opt source               destination         
+nova-filter-top  all  --  anywhere             anywhere            
+nova-compute-OUTPUT  all  --  anywhere             anywhere            
+nova-api-OUTPUT  all  --  anywhere             anywhere            
+
+Chain nova-api-FORWARD (1 references)
+target     prot opt source               destination         
+
+Chain nova-api-INPUT (1 references)
+target     prot opt source               destination         
+ACCEPT     tcp  --  anywhere             tst-goss6.tst-goss6  tcp dpt:8775
+
+Chain nova-api-OUTPUT (1 references)
+target     prot opt source               destination         
+
+Chain nova-api-local (1 references)
+target     prot opt source               destination         
+
+Chain nova-compute-FORWARD (1 references)
+target     prot opt source               destination         
+ACCEPT     udp  --  default              255.255.255.255      udp spt:bootpc dpt:bootps
+
+Chain nova-compute-INPUT (1 references)
+target     prot opt source               destination         
+ACCEPT     udp  --  default              255.255.255.255      udp spt:bootpc dpt:bootps
+
+Chain nova-compute-OUTPUT (1 references)
+target     prot opt source               destination         
+
+Chain nova-compute-inst-13 (1 references)
+target     prot opt source               destination         
+DROP       all  --  anywhere             anywhere             state INVALID
+ACCEPT     all  --  anywhere             anywhere             state RELATED,ESTABLISHED
+nova-compute-provider  all  --  anywhere             anywhere            
+ACCEPT     udp  --  ge2-0.drr02.snpr.wi.frontiernet.net  anywhere             udp spt:bootps dpt:bootpc
+ACCEPT     all  --  50.50.1.0/24         anywhere            
+ACCEPT     icmp --  anywhere             anywhere            
+ACCEPT     tcp  --  anywhere             anywhere             tcp dpt:ssh
+nova-compute-sg-fallback  all  --  anywhere             anywhere            
+
+Chain nova-compute-inst-14 (1 references)
+target     prot opt source               destination         
+DROP       all  --  anywhere             anywhere             state INVALID
+ACCEPT     all  --  anywhere             anywhere             state RELATED,ESTABLISHED
+nova-compute-provider  all  --  anywhere             anywhere            
+ACCEPT     udp  --  ge2-0.drr02.snpr.wi.frontiernet.net  anywhere             udp spt:bootps dpt:bootpc
+ACCEPT     all  --  50.50.1.0/24         anywhere            
+ACCEPT     icmp --  anywhere             anywhere            
+ACCEPT     tcp  --  anywhere             anywhere             tcp dpt:ssh
+nova-compute-sg-fallback  all  --  anywhere             anywhere            
+
+Chain nova-compute-local (1 references)
+target     prot opt source               destination         
+nova-compute-inst-13  all  --  anywhere             ge4-0.drr02.snpr.wi.frontiernet.net 
+nova-compute-inst-14  all  --  anywhere             50.50.1.11          
+
+Chain nova-compute-provider (2 references)
+target     prot opt source               destination         
+
+Chain nova-compute-sg-fallback (2 references)
+target     prot opt source               destination         
+DROP       all  --  anywhere             anywhere            
+
+Chain nova-filter-top (2 references)
+target     prot opt source               destination         
+nova-compute-local  all  --  anywhere             anywhere            
+nova-api-local  all  --  anywhere             anywhere            
+
+
+****************************************
+ iptables NAT rules
+****************************************
+Chain PREROUTING (policy ACCEPT)
+target     prot opt source               destination         
+nova-compute-PREROUTING  all  --  anywhere             anywhere            
+nova-api-PREROUTING  all  --  anywhere             anywhere            
+
+Chain INPUT (policy ACCEPT)
+target     prot opt source               destination         
+
+Chain OUTPUT (policy ACCEPT)
+target     prot opt source               destination         
+nova-compute-OUTPUT  all  --  anywhere             anywhere            
+nova-api-OUTPUT  all  --  anywhere             anywhere            
+
+Chain POSTROUTING (policy ACCEPT)
+target     prot opt source               destination         
+nova-compute-POSTROUTING  all  --  anywhere             anywhere            
+nova-api-POSTROUTING  all  --  anywhere             anywhere            
+nova-postrouting-bottom  all  --  anywhere             anywhere            
+
+Chain nova-api-OUTPUT (1 references)
+target     prot opt source               destination         
+
+Chain nova-api-POSTROUTING (1 references)
+target     prot opt source               destination         
+
+Chain nova-api-PREROUTING (1 references)
+target     prot opt source               destination         
+
+Chain nova-api-float-snat (1 references)
+target     prot opt source               destination         
+
+Chain nova-api-snat (1 references)
+target     prot opt source               destination         
+nova-api-float-snat  all  --  anywhere             anywhere            
+
+Chain nova-compute-OUTPUT (1 references)
+target     prot opt source               destination         
+
+Chain nova-compute-POSTROUTING (1 references)
+target     prot opt source               destination         
+
+Chain nova-compute-PREROUTING (1 references)
+target     prot opt source               destination         
+
+Chain nova-compute-float-snat (1 references)
+target     prot opt source               destination         
+
+Chain nova-compute-snat (1 references)
+target     prot opt source               destination         
+nova-compute-float-snat  all  --  anywhere             anywhere            
+
+Chain nova-postrouting-bottom (1 references)
+target     prot opt source               destination         
+nova-compute-snat  all  --  anywhere             anywhere            
+nova-api-snat  all  --  anywhere             anywhere            
