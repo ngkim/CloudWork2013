@@ -1,0 +1,5 @@
+quantum/ovs_quantum_plugin.ini	/etc/quantum/plugins/openvswitch/ovs_quantum_plugin.ini
+quantum/quantum.conf	/etc/quantum/quantum.conf
+nova/api-paste.ini	/etc/nova/api-paste.ini
+nova/nova-compute.conf	/etc/nova/nova-compute.conf 
+nova/nova.conf	/etc/nova/nova.conf

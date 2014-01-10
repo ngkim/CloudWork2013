@@ -1,0 +1,34 @@
+HOST_IP=211.224.204.141
+MULTI_HOST=True
+
+# network
+FLAT_INTERFACE=eth1
+FIXED_RANGE=10.0.0.0/20
+NETWORK_GATEWAY=10.0.0.1
+FLOATING_RANGE=221.145.180.65/28
+EXT_GW_IP=221.145.180.65
+
+# vnc
+VNCSERVER_LISTEN=0.0.0.0
+VNCSERVER_PROXYCLIENT_ADDRESS=$HOST_IP
+
+# logs
+DEST=/opt/stack
+LOGFILE=$DEST/logs/stack.sh.log
+SCREEN_LOGDIR=$DEST/logs/screen
+
+# system password
+ADMIN_PASSWORD=ohhberry3333
+MYSQL_PASSWORD=ohhberry3333
+RABBIT_PASSWORD=ohhberry3333
+SERVICE_PASSWORD=ohhberry3333
+SERVICE_TOKEN=ohhberry3333
+
+# cinder
+VOLUME_GROUP="cinder-volume"
+VOLUME_NAME_PREFIX="volume-"
+
+# install service
+disable_service n-net
+enable_service q-svc q-agt q-dhcp q-l3 q-meta quantum
+

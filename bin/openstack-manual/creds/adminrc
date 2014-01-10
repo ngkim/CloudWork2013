@@ -1,0 +1,6 @@
+export OS_TENANT_NAME=admin
+export OS_USERNAME=admin
+export OS_PASSWORD=ohhberry3333
+export OS_AUTH_URL="http://10.10.10.51:5000/v2.0/"
+export SERVICE_ENDPOINT="http://211.224.204.141:35357/v2.0"
+export SERVICE_TOKEN=ADMIN

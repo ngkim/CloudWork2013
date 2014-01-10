@@ -1,0 +1,119 @@
+#!/bin/bash
+
+source "$MNG_ROOT/include/print.sh"
+
+usage() {
+	echo "Commands:"
+	echo "   - show"
+	echo "   - set-vlan [host] [vf] [vlan]"
+	echo "   - rate-limit [host] [vf] [rate]"
+	echo "   - help"
+	echo "   - quit"
+	echo "ex) set-vlan nz-controller 0 100"
+}
+
+missing_arg() {
+	CMD=$1
+	echo "$0 $CMD - Missing arguments"
+	exit
+}
+
+MODE="SR-IOV-Manager"
+#print_title "SR-IOV Manager"
+
+NODE_LIST="nz-controller nz-compute"
+
+run_show_vf_list() {
+	HOST=$1
+	NIC=$2
+	
+	#print_title_small "$HOST"
+	echo "========================================================================================"
+	echo "    TENANT        VM            HOST                   VF     VLAN    RATE              "
+	echo "----------------------------------------------------------------------------------------"
+	echo "    Namgon Kim    50.50.1.10    nz-controller          0      10      100               "
+	echo "    Namgon Kim    50.50.1.11    nz-controller          1      10      100               "
+	echo "    Namgon Kim    50.50.1.12    nz-controller          2      10      100               "
+	echo "    Namgon Kim    50.50.1.13    nz-controller          3      10      100               "
+	echo "    Namgon Kim    50.50.1.14    nz-compute             0      10      100               "
+	echo "    Namgon Kim    50.50.1.15    nz-compute             1      10      100               "
+	echo "    Namgon Kim    50.50.1.16    nz-compute             2      10      100               "
+	echo "    Namgon Kim    50.50.1.17    nz-compute             3      10      100               "
+	echo "    Kiman Choi    50.50.2.10    nz-controller          4      20      500               "
+	echo "    Kiman Choi    50.50.2.11    nz-controller          5      20      500               "
+	echo "    Kiman Choi    50.50.2.12    nz-compute             4      20      500               "
+	echo "    Kiman Choi    50.50.2.13    nz-compute             5      20      500               "
+	echo "    Kisang Ok     50.50.3.10    nz-controller          6      30      2000              "
+	echo "    Kisang Ok     50.50.3.11    nz-compute             6      30      2000              "
+	echo "========================================================================================"
+	
+	#ssh $HOST ip link show $NIC | grep vf | grep -v "00:00:00:00:00:00"
+	#VF_FREE=`ssh $HOST ip link show $NIC | grep vf | grep "00:00:00:00:00:00" | wc -l`
+	#echo "   *** There are $VF_FREE free vfs."
+}
+
+
+show_vf_list() {
+	print_info $MODE "show list of VFs"
+	#for node in $NODE_LIST; do
+		run_show_vf_list $node p1p1
+	#done
+}
+
+set_vf_vlan() {
+	HOST=$1
+	VFID=$2
+	VID=$3
+
+	#echo "$HOST>> ip link set p1p1 vf $VFID vlan $VID"
+	print_info $MODE "$HOST - vf $VFID >> set vlan $VID"
+	ssh $HOST ip link set p1p1 vf $VFID vlan $VID
+}
+
+set_vf_rate() {
+	HOST=$1
+	VFID=$2
+	RATE=$3
+
+	print_info $MODE "$HOST - vf $VFID >> set rate $RATE"
+	ssh $HOST ip link set p1p1 vf $VFID rate $RATE
+}
+
+show_info() {
+	print_title "SR-IOV Manager"
+	usage
+}
+
+CMD="init"
+while [ $CMD != "quit" ]; do
+    if [ $CMD == "init" ]; then
+		show_info
+    elif [ $CMD == "show" ]; then
+    	show_vf_list
+    elif [ $CMD == "set-vlan" ]; then
+    	if [ $ARGN -lt 4  ]; then
+    		missing_arg $CMD
+    	fi
+    
+		HOST=`echo $commands | awk '{print $2}'`
+		VFID=`echo $commands | awk '{print $3}'`
+		VID=`echo $commands | awk '{print $4}'`
+    
+    	set_vf_vlan $HOST $VFID $VID
+    elif [ $CMD == "rate-limit" ]; then
+    	if [ $ARGN -lt 4 ]; then
+    		missing_arg $CMD
+    	fi
+    
+		HOST=`echo $commands | awk '{print $2}'`
+		VFID=`echo $commands | awk '{print $3}'`
+		RATE=`echo $commands | awk '{print $4}'`
+    
+    	set_vf_rate $HOST $VFID $RATE
+    elif [ $CMD == "help" ]; then
+		usage
+    fi
+	read -p ">> " commands
+	CMD=`echo $commands | awk '{print $1}'`
+	ARGN=`echo $commands | wc -w`
+done
