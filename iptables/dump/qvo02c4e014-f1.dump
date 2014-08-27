@@ -1,0 +1,15 @@
+tcpdump: WARNING: qvo02c4e014-f1: no IPv4 address assigned
+tcpdump: verbose output suppressed, use -v or -vv for full protocol decode
+listening on qvo02c4e014-f1, link-type EN10MB (Ethernet), capture size 65535 bytes
+04:01:40.177173 fa:16:3e:2a:3f:c6 > 00:11:0a:a0:37:79, ethertype IPv4 (0x0800), length 98: 192.168.51.2 > 192.168.1.2: ICMP echo request, id 27977, seq 66, length 64
+04:01:40.177341 00:11:0a:a0:37:79 > fa:16:3e:2a:3f:c6, ethertype IPv4 (0x0800), length 98: 192.168.1.2 > 192.168.51.2: ICMP echo reply, id 27977, seq 66, length 64
+04:01:41.178675 fa:16:3e:2a:3f:c6 > 00:11:0a:a0:37:79, ethertype IPv4 (0x0800), length 98: 192.168.51.2 > 192.168.1.2: ICMP echo request, id 27977, seq 67, length 64
+04:01:41.178834 00:11:0a:a0:37:79 > fa:16:3e:2a:3f:c6, ethertype IPv4 (0x0800), length 98: 192.168.1.2 > 192.168.51.2: ICMP echo reply, id 27977, seq 67, length 64
+04:01:42.180085 fa:16:3e:2a:3f:c6 > 00:11:0a:a0:37:79, ethertype IPv4 (0x0800), length 98: 192.168.51.2 > 192.168.1.2: ICMP echo request, id 27977, seq 68, length 64
+04:01:42.180224 00:11:0a:a0:37:79 > fa:16:3e:2a:3f:c6, ethertype IPv4 (0x0800), length 98: 192.168.1.2 > 192.168.51.2: ICMP echo reply, id 27977, seq 68, length 64
+04:01:43.181455 fa:16:3e:2a:3f:c6 > 00:11:0a:a0:37:79, ethertype IPv4 (0x0800), length 98: 192.168.51.2 > 192.168.1.2: ICMP echo request, id 27977, seq 69, length 64
+04:01:43.181571 00:11:0a:a0:37:79 > fa:16:3e:2a:3f:c6, ethertype IPv4 (0x0800), length 98: 192.168.1.2 > 192.168.51.2: ICMP echo reply, id 27977, seq 69, length 64
+
+8 packets captured
+10 packets received by filter
+0 packets dropped by kernel

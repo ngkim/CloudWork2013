@@ -14,9 +14,8 @@ fi
 insert_rule() {
 	CHAIN_NAME=$1
 	SRC_NET=$2
-	DST_NET=$3
 
-	iptables -I $CHAIN_NAME 2 -s $SRC_NET -d $SRC_NET -p all -j RETURN
+	iptables -I $CHAIN_NAME 2 -s 0.0.0.0/0 -d $SRC_NET -p all -j RETURN
 }
 
 #CHAIN_NAME=neutron-openvswi-s303d1159-0

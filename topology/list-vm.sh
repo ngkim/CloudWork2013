@@ -139,8 +139,11 @@ for port in $port_list; do
 	print_dev_int_in_br_int $port
 done
 
-OVS_LIST="br-em3 br-em2"
+OVS_LIST=`ovs-vsctl list-br`
 for ovs in $OVS_LIST; do
+	if [ "$ovs" == "br-int" ]; then
+		continue;
+	fi
 	printf "${red}$ovs${normal}\n"
 	port_list=$(get_ovs_list_ports $ovs)
 	for port in $port_list; do
